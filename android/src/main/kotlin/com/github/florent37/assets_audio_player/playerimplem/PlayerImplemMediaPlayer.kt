@@ -212,10 +212,6 @@ class PlayerImplemMediaPlayer(
     override fun setPitch(pitch: Float) {
         //not possible
     }
-
-    override fun getSessionId(listener: (Int) -> Unit) {
-        mediaPlayer?.audioSessionId?.takeIf { it != 0 }?.let(listener)
-    }
 }
 
 fun Map<*, *>.toMapString(): Map<String, String> {
