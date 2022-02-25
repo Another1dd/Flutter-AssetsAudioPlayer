@@ -229,7 +229,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
         
         self.deinitMediaPlayerNotifEvent()
         
-         // added seekBar 
+         // added seekBar
         if #available(iOS 9.1, *) {
             commandCenter.changePlaybackPositionCommand.isEnabled = true
             commandCenter.changePlaybackPositionCommand.addTarget { event in
@@ -514,17 +514,18 @@ public class Player : NSObject, AVAudioPlayerDelegate {
             print("displayNotification " + displayNotification.description)
             print("url: " + url.absoluteString)
             
+            #endif
+            
             var item : SlowMoPlayerItem
             if networkHeaders != nil && networkHeaders!.count > 0 {
                 let asset = AVURLAsset(url: url, options: [
                     "AVURLAssetHTTPHeaderFieldsKey": networkHeaders!,
-                    "AVURLAssetOutOfBandMIMETypeKey": "audio/mpeg"
+                    "AVURLAssetOutOfBandMIMETypeKey": "mp3"
                 ])
                 item = SlowMoPlayerItem(asset: asset)
             } else {
                 item = SlowMoPlayerItem(url: url)
             }
-            item.audioTimePitchAlgorithm = .timeDomain
             self.player = AVQueuePlayer(playerItem: item)
             
             
@@ -578,9 +579,8 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                         #endif
                     }
                     
-                    self?.setPlaySpeed(playSpeed: playSpeed)
-                    
-                   #if os(iOS)
+                    // Additional code to enable respectSilentMode from here.
+                    #if os(iOS)
                     do{
                         if #available(iOS 10.0, *) {
                             try AVAudioSession.sharedInstance().setCategory(category, mode: .default, options: [])
@@ -600,13 +600,14 @@ public class Player : NSObject, AVAudioPlayerDelegate {
                         return;
                     }
                     #endif
+                    // To here.
                     
                     if(autoStart == true){
                         self?.play()
                     }
                     
                     self?.setVolume(volume: volume)
-                  
+                    self?.setPlaySpeed(playSpeed: playSpeed)
                     
                     if(seek != nil){
                         self?.seek(to: seek!)
@@ -839,7 +840,7 @@ public class Player : NSObject, AVAudioPlayerDelegate {
     }
     
     func play(){
-        if #available(iOS 10.0, macOS 10.12, *) {
+        if #available(iOS 10.0, *) {
             self.player?.playImmediately(atRate: self.rate)
         } else {
             self.player?.play()
